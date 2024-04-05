@@ -15,6 +15,7 @@
 		43408E042BA8892A00BD1027 /* Country.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43408E032BA8892A00BD1027 /* Country.swift */; };
 		43408E072BA8A5AF00BD1027 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 43408E062BA8A5AF00BD1027 /* Realm */; };
 		43408E092BA8A5AF00BD1027 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 43408E082BA8A5AF00BD1027 /* RealmSwift */; };
+		43408E882BBC598D00BD1027 /* UserPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43408E872BBC598D00BD1027 /* UserPresenter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		43408DEB2BA886D400BD1027 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		43408DF02BA886D400BD1027 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		43408E032BA8892A00BD1027 /* Country.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Country.swift; sourceTree = "<group>"; };
+		43408E872BBC598D00BD1027 /* UserPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPresenter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,13 +62,46 @@
 		43408DE12BA886D200BD1027 /* crud */ = {
 			isa = PBXGroup;
 			children = (
-				43408DE22BA886D200BD1027 /* AppDelegate.swift */,
-				43408DE62BA886D200BD1027 /* ViewController.swift */,
-				43408E032BA8892A00BD1027 /* Country.swift */,
+				43408E7F2BBC573300BD1027 /* MVP */,
 				43408DEB2BA886D400BD1027 /* Assets.xcassets */,
 				43408DF02BA886D400BD1027 /* Info.plist */,
 			);
 			path = crud;
+			sourceTree = "<group>";
+		};
+		43408E7F2BBC573300BD1027 /* MVP */ = {
+			isa = PBXGroup;
+			children = (
+				43408E842BBC583B00BD1027 /* Presenter */,
+				43408E832BBC583000BD1027 /* Views */,
+				43408E822BBC582700BD1027 /* Model */,
+				43408DE22BA886D200BD1027 /* AppDelegate.swift */,
+			);
+			path = MVP;
+			sourceTree = "<group>";
+		};
+		43408E822BBC582700BD1027 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				43408E032BA8892A00BD1027 /* Country.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		43408E832BBC583000BD1027 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				43408DE62BA886D200BD1027 /* ViewController.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		43408E842BBC583B00BD1027 /* Presenter */ = {
+			isa = PBXGroup;
+			children = (
+				43408E872BBC598D00BD1027 /* UserPresenter.swift */,
+			);
+			path = Presenter;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -150,6 +185,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				43408DE72BA886D200BD1027 /* ViewController.swift in Sources */,
+				43408E882BBC598D00BD1027 /* UserPresenter.swift in Sources */,
 				43408E042BA8892A00BD1027 /* Country.swift in Sources */,
 				43408DE32BA886D200BD1027 /* AppDelegate.swift in Sources */,
 			);

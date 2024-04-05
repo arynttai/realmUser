@@ -2,16 +2,22 @@ import UIKit
 import RealmSwift
 import SnapKit
 
+protocol UserView {
+    func getUsers(_ users: Results<User>)
+    func deleteUser(_ user: User)
+    func updateUserName(to name: String?, to surname: String?, to password: String?, at index: Int)
+}
+
 class ViewController: UIViewController {
-    
     let realm = try! Realm()
-    
+    var presenter: UserPresenter?
+
     var users = [User]() {
         didSet {
             tableView.reloadData()
         }
     }
-    
+
     lazy var name: UITextField = {
         let textfield = UITextField()
         textfield.borderStyle = .bezel
@@ -31,31 +37,33 @@ class ViewController: UIViewController {
         return textfield
     }()
 
-    
     lazy var button: UIButton = {
         let button = UIButton()
         button.setTitle("tap me", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .gray
         button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
-        button.addTarget(self, action: #selector(setName), for: .touchDragInside)
         return button
     }()
-    
+
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.delegate = self
         tableView.dataSource = self
         return tableView
     }()
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.delegate = self
+        tableView.dataSource = self
+        presenter?.viewDidLoad()
+        presenter?.getUsers()
         setupViews()
-        getUsers()
+        view.backgroundColor = .white
     }
-    
+   
+
     private func setupViews() {
         view.addSubview(name)
         view.addSubview(surname)
@@ -63,7 +71,7 @@ class ViewController: UIViewController {
         view.addSubview(button)
         view.addSubview(tableView)
         view.backgroundColor = .white
-        
+
         name.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
             make.leading.trailing.equalToSuperview().inset(16)
@@ -86,14 +94,14 @@ class ViewController: UIViewController {
             make.top.equalTo(password.snp.bottom).offset(12)
             make.height.equalTo(40)
         }
-        
+
         tableView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(12)
             make.top.equalTo(button.snp.bottom).offset(12)
             make.bottom.equalToSuperview()
         }
     }
-    
+
     @objc func buttonTapped() {
         let user = User()
         user.name = name.text ?? ""
@@ -104,93 +112,59 @@ class ViewController: UIViewController {
         surname.text = ""
         password.text = ""
 
-        try! realm.write {
-            realm.add(user)
-        }
-        getUsers()
+        presenter?.buttonTap()
     }
-    
-    @objc func setName() {
-        getUsers()
-    }
-    
-    
-    private func getUsers() {
-        let users = realm.objects(User.self)
-        
-        self.users = users.map({ user in
-            user
-        })
-    }
-    
-    private func deleteUser(_ user: User) {
-        try! realm.write {
-            realm.delete(user)
-        }
-    }
-    
-    private func updateUserName(to name: String?, to surname: String?, to password: String?, at index: Int) {
-        
-        let user = realm.objects(User.self)[index]
-        
-        try! realm.write ({
-            if let name = name, !name.isEmpty {
-                user.name = name
-            }
-            if let surname = surname, !surname.isEmpty {
-                user.surname = surname
-            }
-            if let password = password, !password.isEmpty {
-                user.password = password
-            }
-        })
-
-    }
-    
 }
+
+extension ViewController: UserView {
+    func getUsers(_ users: Results<User>) {
+        self.users = Array(users)
+        tableView.reloadData()
+    }
+
+    func deleteUser(_ user: User) {
+        presenter?.deleteUs(user)
+    }
+
+    func updateUserName(to name: String?, to surname: String?, to password: String?, at index: Int) {
+        presenter?.updateUs(to: name, to: surname, to: password, at: index)
+    }
+}
+
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        users.count
+        return users.count
     }
-    
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
         let user = users[indexPath.row]
-            cell.textLabel?.text = "\(user.name) \(user.surname) \(user.password)"
-
+        cell.textLabel?.text = "\(user.name) \(user.surname) \(user.password)"
         return cell
     }
+
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let editAction = UIContextualAction(style: .normal, title: "Edit") { [weak self] (_, _, completionHandler) in
             self?.editUser(at: indexPath)
             completionHandler(true)
         }
         editAction.backgroundColor = .blue
-        
+
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] (_, _, completionHandler) in
             self?.deleteUser(at: indexPath)
             completionHandler(true)
         }
-        
+
         return UISwipeActionsConfiguration(actions: [deleteAction, editAction])
     }
-    
 
-    private func editUser(at indexPath: IndexPath) {
-        updateUserName(to: name.text ?? "", to: surname.text ?? "", to: password.text ?? "", at: indexPath.row)
-
-        name.text = ""
-        surname.text = ""
-        password.text = ""
-        getUsers()
-
-    }
-    
     private func deleteUser(at indexPath: IndexPath) {
         let user = users[indexPath.row]
-        deleteUser(user)
-        getUsers()
-        
+        presenter?.deleteUs(user)
+    }
+
+    private func editUser(at indexPath: IndexPath) {
+        updateUserName(to: name.text, to: surname.text, to: password.text, at: indexPath.row)
+        presenter?.updateUs(to: name.text, to: surname.text, to: password.text, at: indexPath.row)
     }
 }

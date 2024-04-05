@@ -1,0 +1,6 @@
+[submodule "realmUser"]
+	path = realmUser
+	url = git@github.com:arynttai/realmUser.git
+[submodule "realmUser_MVP"]
+	path = realmUser_MVP
+	url = git@github.com:arynttai/realmUser.git
